@@ -1,0 +1,565 @@
+#Aldrick Tadeo (A01710105)
+#Proyecto Integrador s1par2
+"""
+Probability Simulator, simulates common random choice generators like coin tosses, dice rolls, card draws and more.
+"""
+from os import system
+import random
+from time import sleep
+from colorama import Fore, Style
+from datetime import datetime
+
+card_draw_file_path = "" #Change to save to a custom location. Default: null
+rand_letr_file_path = "" #Change to save to a custom location. Default: null
+
+KEYWORDS = ["yes_si", "settings_ajustes", "history_memory_historial", "0_exit_no_back_return_quit_leave_salir", "reset_erase_clear_borrar"]
+"""Keywords list contains a series of strings set to recognize a variety of user inputs in two languages, reducing errors seen in hard-coded systems."""
+
+""" coin_toss function randomly selects a value from a list containing 2 choices, heads and tails, this is repeated the amount established by the user.
+    After, the user is asked to toss again, reset stats, or return to menu. """
+def coin_toss(rep): 
+    toss_count = 0
+    head_count = 0
+    tail_count = 0
+    coin = ("Heads", "Tails")
+    res_list = []
+    active_func = "yes"
+    while active_func in KEYWORDS[0]:
+        system('cls')
+        for i in range(rep):
+            toss_count = toss_count + 1
+            coin_res = random.choice(coin) #
+            res_list.append(coin_res)
+            print(coin_res)
+            if coin_res == "Heads":
+                head_count = head_count + 1
+            elif coin_res == "Tails":
+                tail_count = tail_count + 1
+        head_percent = head_count / toss_count * 100
+        tail_percent = tail_count / toss_count * 100
+        print("====================== ")
+        print("Total heads:  %i (%.1f %%)" % (head_count, head_percent))
+        print("Total tails:  %i (%.1f %%)" % (tail_count, tail_percent))
+        print("Total tosses: %i" % (toss_count))
+        active_func = str.lower(input("Toss Again? (yes/reset/exit)>>> ")) # Pass repeat block to main().
+        
+        if active_func == "":
+            active_func = "yes"   
+        
+        elif active_func in KEYWORDS[4]:
+            toss_count = 0
+            head_count = 0
+            tail_count = 0
+            active_func = "yes"   
+            
+        if active_func in KEYWORDS[3]:
+            print("Leaving Simulator, all data will be cleared.")
+            sleep(2)
+            return
+        
+        elif active_func in KEYWORDS[0]: 
+            rep = input("How many tosses? >>> ")
+            if rep == "":
+                rep = 1
+            else:
+                rep = int(rep)
+        
+        else:
+            print(Fore.YELLOW + "Error, invalid option. Returning to main menu..." + Style.RESET_ALL)
+            sleep(2.5)
+            return
+    
+""" Rolls a dice, set to standard 6 sided die, the user can choose the amount of dice rolled per repetition and sides on dice.
+    Outputs the result of each die in a list and their sum. The function then asks to repeat, enter settings or exit. """
+def dice_roll(rep, dice_num):
+    res_list = []
+    die_sides = 6
+    die_sides_list = [4, 6, 8, 10, 12, 20]
+    dice_sum = 0
+    active_func = "yes"
+    while active_func in KEYWORDS[0]:
+        system('cls')
+        for i in range(rep * dice_num):
+            dice_res = random.randint(1, die_sides)
+            res_list.append(dice_res)
+            dice_sum = dice_sum + dice_res
+            if len(res_list) == dice_num:
+                print((res_list), end=(", Sum = %i \n" %(dice_sum)))
+                res_list.clear()
+                dice_sum = 0
+        active_func = str.lower(input("Roll Again? (yes/settings/exit)>>> ")) 
+        
+        if active_func == "":
+            active_func = "yes"
+        
+        elif active_func in KEYWORDS[1]:
+            system('cls')
+            print("   Dice Roll - Settings \n")
+            die_sides = int(input("Set amount of sides on die (4, 6, 8, 10, 12, 20) >>> "))
+            if die_sides not in die_sides_list:
+                die_sides_warn = str.lower(input("Simulation may differ from real dice, continue? (y/n) >>> "))
+                if die_sides_warn not in KEYWORDS[0]:
+                    print("Reset to 6 sides. Returning to simulator.")
+                    die_sides = 6
+            active_func = "yes"
+        
+        if active_func in KEYWORDS[3]:
+            print("Leaving Simulator, all data will be cleared.")
+            sleep(2)
+            return
+        
+        elif active_func in KEYWORDS[0]:
+            print("") 
+            rep = input("How many rolls? >>> ")
+            if rep == "":
+                rep = 1
+            else:
+                rep = int(rep)
+        
+        else:
+            print(Fore.YELLOW + "Error, invalid option. Returning to main menu..." + Style.RESET_ALL)
+            sleep(2.5)
+            return
+        
+"""Generates random numbers, the user determines the upper, lower draw limits and amount of repetitions. """
+def rand_numb(min, max, rep):
+    num_res = 0
+    num_sum = 0
+    active_func = "yes"
+    while active_func in KEYWORDS[0]:
+        system('cls')
+        for i in range(rep):
+            num_res = random.randint(min, max)
+            print(num_res)
+            num_sum = num_sum + num_res
+        print("Sum of numbers: ", num_sum)
+        active_func = str.lower(input("Repeat? (y/n)>>> "))
+        if active_func == "":
+            rep = 1
+            active_func = "yes"
+
+        if active_func in KEYWORDS[3]:
+            print("Leaving Simulator, all data will be cleared.")
+            sleep(2)
+            return
+        
+        elif active_func in KEYWORDS[0]:
+            print("") 
+            rep = input("How many times? >>> ")
+            if rep == "":
+                rep = 1
+            else:
+                rep = int(rep)
+        
+        else:
+            print(Fore.YELLOW + "Error, invalid option. Returning to main menu..." + Style.RESET_ALL)
+            sleep(2.5)
+            return  
+        
+"""Displays a menu for card settings."""
+def card_set_menu():
+    system('cls')
+    print("""
+    Card Draw Sim - Settings
+    
+    1. Repeat Cards (Infinite Deck)
+    2. Choose Suit
+    3. ~
+    0. Exit Settings Menu
+    """)
+
+"""Displays menu containing card suits to choose from."""    
+def card_suit_menu():
+    system('cls')
+    print("""
+    Card Draw Sim - Suit Select
+    
+    1. French Suit (52 cards)
+    2. Spanish Suit (48 cards)
+    3. ~
+    0. Exit Suit Select Menu
+    """)
+   
+Fr52_card_suits = ("Clubs", "Diamonds", "Hearts", "Spades")
+Fr52_card_ranks = ("Ace", 2, 3, 4, 5, 6, 7, 8, 9, 10, "J", "Q", "K")
+Sp48_card_suits = ("Espadas", "Copas", "Monedas", "Bastos")
+Sp48_card_ranks = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+
+"""Secondary Card Draw function, interprets settings modifications and applies them to global variables used in primary function."""
+def card_set_select():
+    global inf_deck
+    global selected_rank
+    global selected_suit
+    global card_hist
+    active = True
+    while active == True:
+        system('cls')
+        card_set_menu()
+        set_select = int(input("Choose a setting to modify: "))
+        if set_select == 1:
+            print("\t Infinite deck active: ", str(inf_deck))
+            if str.lower(input("\t Toggle infinite deck? (y/n) >>> ")) in KEYWORDS[0]:
+                inf_deck = not inf_deck
+                print("Infinite deck active: ", str(inf_deck))
+                sleep(2)
+            else:
+                print("Infinite deck active: ", str(inf_deck))
+                sleep(2)
+        elif set_select == 2:
+            card_suit_menu()
+            suit_select = int(input("Choose a suit/deck to draw from. (Memory will be cleared.) >>> "))
+            if suit_select == 1:
+                selected_rank = Fr52_card_ranks
+                selected_suit = Fr52_card_suits
+                print("Current Card Pack: Standard French 52")
+                card_hist.clear()
+                sleep(1)
+            elif suit_select == 2:
+                selected_rank = Sp48_card_ranks
+                selected_suit = Sp48_card_suits
+                print("Current Card Pack: Spanish 48")
+                card_hist.clear()
+                sleep(1)
+            elif suit_select == 0:
+                pass
+        elif set_select == 0:
+            return
+        else:
+            print("Error: Invalid option.")
+            sleep(1)
+
+""" Secondary Card Draw function, manages card history."""
+card_hist = []
+def card_hist_manage(card_hist):
+    for i in range(len(card_hist)):
+        print(card_hist[i])
+                
+    print("Total cards drawn: ", len(card_hist))
+    
+    if str.lower(input("Save history to text file? (y/n) >>> ")) in KEYWORDS[0]:
+        print("Saving file...")
+        txt_file = open(card_draw_file_path + "card_draw_hist_%s.txt" % (datetime.now()).strftime("%Y-%m-%d_%H-%M-%S"), "w")
+        txt_file.write(str(card_hist))
+        txt_file.close()
+        sleep(2)
+        print("File saved successfully!")
+        sleep(1)
+        
+    if str.lower(input("Clear draw history? (y/n) >>> ")) in KEYWORDS[0]:
+        card_hist.clear()
+        
+        
+    else:
+        return
+ 
+            
+""" Primary Card Draw function. Randomly chooses data from lists containing card ranks and suits, 
+    then adds them to a list to facilitate display and storage.
+    Function then prints a list containing a rank and suit, afterwards asks the user to choose an option, 
+    either drawing again, adjusting settings, viewing history or exit simulator. 
+    In the history option, the user can save the data in a text file."""            
+def card_draw(rep): #Add other card suits in later versions, following same framework as current. Add hanafuda (possibly requiring different display system (illustrative cards)).
+    global inf_deck
+    inf_deck = False
+    global selected_rank
+    selected_rank = Fr52_card_ranks
+    global selected_suit
+    selected_suit = Fr52_card_suits
+    global card_hist
+    card_hist = []
+    active_func = "yes"
+    while active_func in KEYWORDS[0]:
+        system('cls')
+        i = 0
+        while i < rep:
+            res_list = []
+            res_list.append(random.choice(selected_rank))
+            res_list.append(random.choice(selected_suit))
+            if len(res_list) == 2: # Add condition to set print colors (diamonds, hearts = red).
+                if inf_deck == False:
+                    if len(card_hist) == (len(selected_rank) * len(selected_suit)):
+                        print(Fore.YELLOW + "All cards drawn. clear history or enable infinite deck." + Style.RESET_ALL)
+                        break    
+                        
+                    if res_list not in card_hist:
+                        card_hist.append(list(res_list))
+                        if "Diamonds" in res_list or "Hearts" in res_list:
+                            print(Fore.RED + str(res_list) + Style.RESET_ALL)
+                        else:
+                            print(str(res_list))
+                        i = i + 1
+                elif inf_deck == True:
+                    card_hist.append(list(res_list))
+                    if "Diamonds" in res_list or "Hearts" in res_list:
+                            print(Fore.RED + str(res_list) + Style.RESET_ALL)
+                    else:
+                        print(str(res_list))
+                    i = i + 1
+                res_list.clear()
+        active_func = str.lower(input("Draw Again? (yes/settings/history/exit) >>> "))
+        
+        if active_func == "":
+            active_func = "yes"
+            
+        if active_func not in KEYWORDS[0]:
+            if active_func in KEYWORDS[1]:
+                system('cls')
+                card_set_select()
+                if str.lower(input("Return to simulator? (y/n) >>> ")) in KEYWORDS[0]:
+                    active_func = "yes"
+                else:
+                    active_func = "no"
+                
+            elif active_func in KEYWORDS[2]:
+                card_hist_manage(card_hist)
+                if str.lower(input("Return to simulator? (y/n) >>> ")) in KEYWORDS[0]:
+                    active_func = "yes"
+                else:
+                    active_func = "no"    
+                
+        if active_func in KEYWORDS[3]:
+            print("Leaving Simulator, all data will be cleared.")
+            sleep(2)
+            return
+        
+        elif active_func in KEYWORDS[0]:
+            print("") 
+            rep = input("Amount of cards to draw. >>> ")
+            if rep == "":
+                rep = 1
+            else:
+                rep = int(rep)
+        
+        else:
+            print(Fore.YELLOW + "Error, invalid option. Returning to main menu..." + Style.RESET_ALL)
+            sleep(2.5)
+            return   
+
+""" Displays a menu with a list of settings the user can adjust."""
+def letr_set_menu():
+    system('cls')
+    print("""
+    Letter Select Sim - Settings
+    
+    1. Toggle Repeating Letters
+    2. ~
+    0. Exit Settings Menu
+    """)
+
+""" Secondary Letter Select function, interprets settings modifications and applies them to global variables used in primary function."""
+def letr_set_select():
+    global inf_alpha
+    global letter_hist
+    active = True
+    while active == True:
+        system('cls')
+        letr_set_menu()
+        set_select = int(input("Choose a setting to modify: "))
+        if set_select == 1:
+            print("\t Repeating letters active: ", str(inf_alpha))
+            if str.lower(input("\t Toggle Repeating Letters? (y/n) >>> ")) in KEYWORDS[0]:
+                inf_alpha = not inf_alpha 
+                print("Repeating Letters active: ", str(inf_alpha))
+                sleep(2)
+            else:
+                print("Repeating Letters active: ", str(inf_alpha))
+                sleep(2)
+        elif set_select == 2:
+            pass
+        elif set_select == 0:
+            return
+        else:
+            print("Error: Invalid option.")
+
+""" Secondary Random Letter function, manages letter history."""            
+letter_hist = []
+def letter_hist_manage():
+    for i in range(len(letter_hist)):
+        print(letter_hist[i])
+                
+    print("Total cards drawn: ", len(letter_hist))
+    
+    if str.lower(input("Save history to text file? (y/n) >>> ")) in KEYWORDS[0]:
+        print("Saving file...")
+        txt_file = open(rand_letr_file_path + "rand_letr_hist_%s.txt" % (datetime.now()).strftime("%Y-%m-%d_%H-%M-%S"), "w")
+        txt_file.write(str(letter_hist))
+        txt_file.close()
+        sleep(2)
+        print("File saved successfully!")
+        sleep(1)
+        
+    if str.lower(input("Clear draw history? (y/n) >>> ")) in KEYWORDS[0]:
+        letter_hist.clear()
+    
+      
+
+""" The random letter function gives random letters in the amount given by the user. 
+    User can then select between: repeating, settings, history or leaving the simulator."""
+def rand_letr(rep):
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    global inf_alpha
+    global letter_hist
+    inf_alpha = False
+    active_func = "yes"
+    letter_hist = []
+    while active_func in KEYWORDS[0]:
+        system('cls')
+        i = 0
+        while i < rep:
+            letter_res = random.choice(alphabet)
+            if inf_alpha == False:
+                if len(letter_hist) == 26:
+                    print(Fore.YELLOW + "All letters drawn. clear history or enable infinite alphabet." + Style.RESET_ALL)
+                    break
+                
+                if letter_res not in letter_hist:
+                    letter_hist.append(letter_res)
+                    print(letter_res)
+                    i = i + 1
+                    
+            elif inf_alpha == True:
+                letter_hist.append(letter_res)
+                print(letter_res)
+                i = i + 1
+            
+        active_func = str.lower(input("Repeat? (yes/settings/history/exit)>>> "))
+        
+        if active_func == "":
+            rep = 1
+            active_func = "yes"
+       
+        if active_func not in KEYWORDS[0]:      
+            if active_func in KEYWORDS[1]:
+                system('cls')
+                letr_set_select()
+                if str.lower(input("Return to simulator? (y/n) >>> ")) in KEYWORDS[0]:
+                    active_func = "yes"
+                else:
+                    active_func = "no"    
+                
+            elif active_func in KEYWORDS[2]:
+                if active_func in KEYWORDS[0]:
+                    pass
+                letter_hist_manage()
+                if str.lower(input("Return to simulator? (y/n) >>> ")) in KEYWORDS[0]:
+                    active_func = "yes"
+                else:
+                    active_func = "no"   
+        
+        if active_func in KEYWORDS[3]:
+            print("Leaving Simulator, all data will be cleared.")
+            sleep(2)
+            return
+        
+        elif active_func in KEYWORDS[0]:
+            print("") 
+            rep = input("Amount of letters to select. >>> ")
+            if rep == "":
+                rep = 1
+            else:
+                rep = int(rep)
+        
+        else:
+            print(Fore.YELLOW + "Error, invalid option. Returning to main menu..." + Style.RESET_ALL)
+            sleep(2.5)
+            return
+
+""" Prints information about program."""
+def about_program():
+    system('cls')
+    print("""
+    Probability Simulator v3
+    By: Aldrick Tadeo @ Tec de Monterrey
+    2022 (py3.10)
+    
+    Probability Simulator, simulates common random choice generators like coin tosses, dice rolls, card draws and more.      
+    
+    
+    Test Case Example: (How to use)
+    Input: Option number (1).
+    Input: Amount of tosses to simulate (integer >= 1).
+    Output: Either heads or tails chosen randomly, total amount of Tails, total amount of Heads and total toss count.
+    Input: Choose between flip again (y), reset statistics (reset) or return to main menu (exit).
+    
+    NOTE: Test examples aren't exact, as all functions generate random/pseudo-random results.
+        
+        Coin Toss - Test Case Example:
+            
+        Input: 1
+        Input: 8
+        Output: Heads  Heads  Heads  Tails  Tails  Heads  Tails  Heads
+        Output: Total heads:  5 (62.5)
+        Output: Total tails:  3 (37.5)
+        Input: Choose between flip again (y), reset statistics (reset) or return to main menu (exit).
+        
+                       
+    """)
+    if str(input("Enter \"back\" to return to menu. >>> ")) in KEYWORDS[3]:
+        return
+        
+def menu():
+    print("""
+===[ Probability Simulator v3.0 ]===  
+    
+    1. Coin Toss
+    2. Dice Roll
+    3. Random Number
+    4. Draw Cards
+    5. Random Letter
+    A. About Program
+    0. Exit
+        
+    """)
+
+def main():
+    active = True
+    while active == True:
+        system('cls')
+        menu()
+        option = str.lower(input("Choose a simulator: ")) #add capability to read text input. (ie: "Coin Toss")
+        print("")
+        if option in "1_coin toss":
+            print("== Coin Toss ==")
+            rep = int(input("How many tosses? >>> "))
+            if rep < 1:
+                print(Fore.YELLOW + "Error: Invalid number, enter integer >= 1." + Style.RESET_ALL)
+                sleep(2)
+            else:
+                coin_toss(rep)
+                
+        elif option in "2_dice roll":
+            print("== Dice Roll ==")
+            dice_num = int(input("How many dice? >>> "))
+            rep = int(input("How many rolls? >>> "))
+            dice_roll(rep, dice_num)
+            
+        elif option in "3_random number":
+            print("== Random Number ==")
+            max_num = int(input("Upper limit >>> "))
+            min_num = int(input("Lower limit >>> "))
+            rep = int(input("Repetitions >>> "))
+            rand_numb(min_num, max_num, rep)
+            
+        elif option in "4_card draw":
+            print("== Card Draw ==")
+            rep = int(input("Draw how many cards? >>> "))
+            card_draw(rep)
+        
+        elif option in "5_random letter":
+            print("== Random Letter ==")
+            rep = int(input("How many letters? >>> "))
+            rand_letr(rep)
+        
+        elif option in "Aabout Program":
+            print("== About Program ==")
+            about_program()
+            
+        elif option in KEYWORDS[3]:
+            print("Goodbye!")
+            sleep(2)
+            active = False
+        
+        else:
+            print(Fore.YELLOW + "Error: Invalid option, enter number between 1-5 or letter if applicable." + Style.RESET_ALL)
+            sleep(2)
+main()
