@@ -1,7 +1,8 @@
 #Aldrick Tadeo (A01710105)
 #TC1028 Proyecto Integrador s1par2
 """
-Probability Simulator, simulates common random choice generators like coin tosses, dice rolls, card draws and more.
+Probability Simulator, simulates common random choice generators
+like coin tosses, dice rolls, card draws and more.
 """
 from os import system
 import random
@@ -15,7 +16,8 @@ rand_letr_file_path = "" #Change to save to a custom location. Default: null
 KEYWORDS = ["yes_si", "settings_ajustes", "history_memory_historial", "0_exit_no_back_return_quit_leave_salir", "reset_erase_clear_borrar"]
 """Keywords list contains a series of strings set to recognize a variety of user inputs in two languages, reducing errors seen in hard-coded systems."""
 
-""" coin_toss function randomly selects a value from a list containing 2 choices, heads and tails, this is repeated the amount established by the user.
+""" coin_toss function randomly selects a value from a list containing 2 choices, heads and tails, 
+    this is repeated the amount established by the user.
     After, the user is asked to toss again, reset stats, or return to menu. """
 def coin_toss(rep): 
     toss_count = 0
@@ -291,7 +293,7 @@ def card_draw(rep): #Add other card suits in later versions, following same fram
                 elif inf_deck == True:
                     card_hist.append(list(res_list))
                     if "Diamonds" in res_list or "Hearts" in res_list:
-                            print(Fore.RED + str(res_list) + Style.RESET_ALL)
+                        print(Fore.RED + str(res_list) + Style.RESET_ALL)
                     else:
                         print(str(res_list))
                     i = i + 1
